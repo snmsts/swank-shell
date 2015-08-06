@@ -1,0 +1,14 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(ql:quickload :swank :silent t)
+
+(defun main (&optional port &rest argv)
+  (declare (ignorable argv))
+  (if port
+      (progn (swank:create-server :port (parse-integer port) :dont-close t)
+             (loop :while t :do (sleep 1)))
+      (format *error-output* "give me port number for swank server!~%")))
+
