@@ -8,10 +8,7 @@ exec ros -Q -- $0 "$@"
 
 (defun main (&rest argv)
   (declare (ignorable argv))
-  (let ((socket (usocket:socket-connect "localhost" 4050 :element-type '(unsigned-byte 8))))
-    (push socket swank-shell.client::*sockets*))
-  (bt:make-thread #'swank-shell.client::conn-thread)
-  (loop :for l := (read-line)
+  (loop :with cl := (swank-shell.client::connect-swank "localhost" 4050)
+     :for l := (read-line)
      :until (equal l "quit")
-     :do (bt:with-lock-held (swank-shell.client::*lock*)
-           (push l swank-shell.client::*list*))))
+     :do (swank-shell.client::send-message cl l)))
