@@ -64,3 +64,10 @@
     (push (usocket:socket-connect "localhost" 4050 :element-type '(unsigned-byte 8)) (slot-value cl 'sockets))
     (bt:make-thread (conn-thread cl))
     cl))
+
+#+ros.installing
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (setq ros.install:*build-hook*
+        (lambda ()
+          (ros:roswell `("build" ,(merge-pathnames "client.ros" (ql:where-is-system "swank-shell")) "-o"
+                                 ,(ensure-directories-exist (merge-pathnames "roswell/swsh" (ql:where-is-system "swank-shell")))) :interactive nil))))
